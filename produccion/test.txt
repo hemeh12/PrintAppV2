@@ -1,0 +1,14 @@
+#@- fontName=Arial,style=Bold,fontSize=14,marginTop=10,marginLeft=250, content=center
+  	Este es un texto en negrita, 
+	#@- fontName=Arial,style=Bold,fontSize=8, marginLeft=250, content=center
+		texto entre medio
+	-#@
+	con margen superior de 10 y margen izquierdo de 50.
+-#@
+#@- fontName=Times New Roman,style=Italic,fontSize=12,marginTop=20,marginLeft=30 
+  Este es un texto en cursiva, Times New Roman de tamaño 12, con margen superior de 20 y margen izquierdo de 30.
+-#@
+#@- fontName=Courier New,style=Underline,fontSize=10,marginTop=5,marginLeft=10 
+  Este es un texto subrayado, Courier New de tamaño 10, con margen superior de 5 y margen izquierdo de 10.
+-#@
+Este es un texto sin formato específico después de la última configuración.
