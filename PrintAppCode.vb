@@ -1,5 +1,5 @@
-﻿'para compilar utilizar: "dotnet publish -c Release -r win-x86" en la carpeta donde este el archivo main.vbproj y el archivo imprimir.vb juntos
-'!Al agregar una libreria nueva es IMPORTANTE recordar que se necesita colocarla tambien en el archivo .vbproj dentro de <ItemGroup>
+﻿' To compile, use: "dotnet publish -c Release -r win-x86" in the folder where the main.vbproj and print.vb files are located together.
+'!When adding a new library, it's IMPORTANT to remember that it also needs to be placed in the .vbproj file within <ItemGroup>.
 
 Imports System
 Imports System.Drawing.Printing
@@ -9,7 +9,7 @@ Imports System.Collections.Generic
 Imports System.Xml
 
 Module PrintAppV2
-    ' Variables para formato de texto
+    ' Variables for text formatting
     Public fontName As String = "Arial"
     Public style As FontStyle = FontStyle.Regular
     Public fontSize As Integer = 8
@@ -21,40 +21,38 @@ Module PrintAppV2
     Public printDoc As New PrintDocument()
 
     Public isFormatting As Boolean = False
-    ' Stack para manejar los formatos anidados
+    ' Stack to manage nested formats
     Public formatStack As New Stack(Of TextFormat)
 
     Sub Main(args As String())
         Dim txtFilePath As String = args(0)
         If Not File.Exists(txtFilePath) Then
-            Console.WriteLine("El archivo no existe.")
+            Console.WriteLine("The file does not exist.")
             Return
         End If
-        Dim facturaContenido As String = File.ReadAllText(txtFilePath)
+        Dim documentContent As String = File.ReadAllText(txtFilePath)
 
         Try
-            FormatTxt(facturaContenido)
+            FormatTxt(documentContent)
         Catch ex As Exception
             Dim errorMessage As String = "Error: " & ex.Message
             File.WriteAllText("error.txt", errorMessage)
         End Try
     End Sub
 
-    Sub FormatTxt(facturaContenido As String)
+    Sub FormatTxt(documentContent As String)
         Dim TOKENSTART As String = "#@-"
         Dim TOKENEND As String = "-#@"
-        Dim lines As String() = facturaContenido.Split(Environment.NewLine)
-
+        Dim lines As String() = documentContent.Split(Environment.NewLine)
 
         AddHandler printDoc.PrintPage, Sub(sender, e)
                                            yPosition = marginTop
                                            For Each line As String In lines
-                                               ' Manejar inicio de formato
+                                               ' Handle start of formatting
                                                If line.Trim().StartsWith(TOKENSTART) Then
-                                                   ' Guardar formato actual en el stack
-
+                                                   ' Save current format on the stack
                                                    SaveCurrentFormat()
-                                                   ' Configurar nuevo formato
+                                                   ' Set new format
                                                    line = line.Replace(TOKENSTART, "").Replace(" ", "")
                                                    Dim array As String() = line.Split(","c)
                                                    For Each attribute As String In array
@@ -66,13 +64,12 @@ Module PrintAppV2
 
                                                    isFormatting = True
 
-                                                   ' Manejar fin de formato
+                                                   ' Handle end of formatting
                                                ElseIf line.Trim().StartsWith(TOKENEND) Then
-
-                                                   ' Restablecer formato desde el stack
+                                                   ' Restore format from the stack
                                                    RestorePreviousFormat()
 
-                                                   ' Manejar líneas formateadas
+                                                   ' Handle formatted lines
                                                ElseIf isFormatting = True And Not line.Trim().StartsWith(TOKENEND) And Not line.StartsWith(TOKENSTART) Then
                                                    AddTextFormat(line.Trim(), e)
                                                End If
@@ -82,13 +79,13 @@ Module PrintAppV2
         printDoc.Print()
     End Sub
 
-    ' Método para guardar el formato actual en el stack
+    ' Method to save the current format on the stack
     Sub SaveCurrentFormat()
         Dim currentFormat As New TextFormat(fontName, style, fontSize, marginTop, marginLeft, format.Alignment)
         formatStack.Push(currentFormat)
     End Sub
 
-    ' Método para restablecer el formato desde el stack
+    ' Method to restore the format from the stack
     Sub RestorePreviousFormat()
         If formatStack.Count > 0 Then
             Dim previousFormat As TextFormat = formatStack.Pop()
@@ -103,7 +100,7 @@ Module PrintAppV2
         End If
     End Sub
 
-    ' Método para configurar el formato basado en las claves y valores
+    ' Method to set the format based on keys and values
     Sub GetFormat(key As String, value As String)
         Select Case key.ToLower()
             Case "fontname"
@@ -128,14 +125,14 @@ Module PrintAppV2
         End Select
     End Sub
 
-    ' Método para agregar texto formateado a la página
+    ' Method to add formatted text to the page
     Sub AddTextFormat(text As String, e As PrintPageEventArgs)
         currentFont = New Font(fontName, fontSize, style)
         e.Graphics.DrawString(text, currentFont, Brushes.Black, marginLeft, yPosition, format)
         yPosition += currentFont.Height + marginTop
     End Sub
 
-    ' Clase para almacenar los formatos de texto
+    ' Class to store text formats
     Public Class TextFormat
         Public Property FontName As String
         Public Property Style As FontStyle
