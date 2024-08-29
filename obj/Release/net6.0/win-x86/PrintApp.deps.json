@@ -32,6 +32,10 @@
             "assemblyVersion": "6.0.0.0",
             "fileVersion": "6.0.2523.51912"
           },
+          "System.Collections.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.2523.51912"
+          },
           "System.ComponentModel.EventBasedAsync.dll": {
             "assemblyVersion": "6.0.0.0",
             "fileVersion": "6.0.2523.51912"

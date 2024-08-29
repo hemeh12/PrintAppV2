@@ -243,9 +243,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\DELL\\Desktop\\printAppv2\\PrintApp.vbproj",
+      "projectUniqueName": "C:\\Users\\DELL\\Desktop\\printAppv2\\PrintAppConfig.vbproj",
       "projectName": "PrintApp",
-      "projectPath": "C:\\Users\\DELL\\Desktop\\printAppv2\\PrintApp.vbproj",
+      "projectPath": "C:\\Users\\DELL\\Desktop\\printAppv2\\PrintAppConfig.vbproj",
       "packagesPath": "C:\\Users\\DELL\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\DELL\\Desktop\\printAppv2\\obj\\",
       "projectStyle": "PackageReference",
