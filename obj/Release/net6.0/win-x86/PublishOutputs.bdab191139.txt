@@ -1,2 +1,0 @@
-C:\Users\DELL\Desktop\printAppv2\bin\Release\net6.0\win-x86\publish\PrintApp.pdb
-C:\Users\DELL\Desktop\printAppv2\bin\Release\net6.0\win-x86\publish\PrintApp.exe
