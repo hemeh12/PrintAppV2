@@ -7,6 +7,7 @@ Imports System.IO
 Imports System.Drawing
 Imports System.Collections.Generic
 Imports System.Xml
+Imports System.Windows.Forms
 
 Module PrintAppV2
     ' Variables for text formatting
@@ -19,25 +20,32 @@ Module PrintAppV2
     Public currentFont As Font
     Public yPosition As Integer
     Public printDoc As New PrintDocument()
+    Dim rectangle As New Rectangle
 
     Public isFormatting As Boolean = False
     ' Stack to manage nested formats
     Public formatStack As New Stack(Of TextFormat)
 
     Sub Main(args As String())
-        Dim txtFilePath As String = args(0)
-        If Not File.Exists(txtFilePath) Then
-            Console.WriteLine("The file does not exist.")
-            Return
-        End If
-        Dim documentContent As String = File.ReadAllText(txtFilePath)
+        If args.Length > 0 Then
+            Dim txtFilePath As String = args(0)
+            If Not File.Exists(txtFilePath) Then
+                Console.WriteLine("The file does not exist.")
+                Return
+            End If
+            Dim documentContent As String = File.ReadAllText(txtFilePath)
 
-        Try
-            FormatTxt(documentContent)
-        Catch ex As Exception
-            Dim errorMessage As String = "Error: " & ex.Message
-            File.WriteAllText("error.txt", errorMessage)
-        End Try
+            Try
+                FormatTxt(documentContent)
+            Catch ex As Exception
+                Dim errorMessage As String = "Error: " & ex.Message
+                File.WriteAllText("error.txt", errorMessage)
+            End Try
+        Else
+            Application.EnableVisualStyles()
+            Application.SetCompatibleTextRenderingDefault(False)
+            Application.Run(New AboutForm())
+        End If
     End Sub
 
     Sub FormatTxt(documentContent As String)
@@ -81,7 +89,7 @@ Module PrintAppV2
 
     ' Method to save the current format on the stack
     Sub SaveCurrentFormat()
-        Dim currentFormat As New TextFormat(fontName, style, fontSize, marginTop, marginLeft, format.Alignment)
+        Dim currentFormat As New TextFormat(fontName, style, fontSize, marginTop, marginLeft, format.Alignment, rectangle)
         formatStack.Push(currentFormat)
     End Sub
 
@@ -95,6 +103,7 @@ Module PrintAppV2
             marginTop = previousFormat.MarginTop
             marginLeft = previousFormat.MarginLeft
             format.Alignment = previousFormat.Alignment
+            rectangle = previousFormat.RectangleValue
         Else
             isFormatting = False
         End If
@@ -122,14 +131,28 @@ Module PrintAppV2
                     Case "far"
                         format.Alignment = StringAlignment.Far
                 End Select
+            Case "rectangle"
+                Dim rectangleValue = value.Replace("{", "").Replace("}", "").Replace(" ", "").Split(";"c)
+
+                Dim dimensions = Array.ConvertAll(rectangleValue, Function(str) Convert.ToInt32(str))
+                rectangle = New Rectangle(0, 0, dimensions(0), dimensions(1))
         End Select
     End Sub
 
     ' Method to add formatted text to the page
     Sub AddTextFormat(text As String, e As PrintPageEventArgs)
         currentFont = New Font(fontName, fontSize, style)
-        e.Graphics.DrawString(text, currentFont, Brushes.Black, marginLeft, yPosition, format)
-        yPosition += currentFont.Height + marginTop
+
+        If rectangle.Width > 0 AndAlso rectangle.Height > 0 Then
+            Dim rectF As New RectangleF(marginLeft, yPosition, rectangle.Width, rectangle.Height)
+            e.Graphics.DrawString(text, currentFont, Brushes.Black, rectF, format)
+        Else
+            e.Graphics.DrawString(text, currentFont, Brushes.Black, marginLeft, yPosition, format)
+        End If
+        If marginTop > 0 Then
+
+            yPosition += currentFont.Height + marginTop
+        End If
     End Sub
 
     ' Class to store text formats
@@ -140,14 +163,15 @@ Module PrintAppV2
         Public Property MarginTop As Integer
         Public Property MarginLeft As Integer
         Public Property Alignment As StringAlignment
-
-        Public Sub New(fontName As String, style As FontStyle, fontSize As Integer, marginTop As Integer, marginLeft As Integer, alignment As StringAlignment)
+        Public Property RectangleValue As Rectangle
+        Public Sub New(fontName As String, style As FontStyle, fontSize As Integer, marginTop As Integer, marginLeft As Integer, alignment As StringAlignment, rectangle As Rectangle)
             Me.FontName = fontName
             Me.Style = style
             Me.FontSize = fontSize
             Me.MarginTop = marginTop
             Me.MarginLeft = marginLeft
             Me.Alignment = alignment
+            Me.RectangleValue = rectangle
         End Sub
     End Class
 End Module
