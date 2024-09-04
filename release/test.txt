@@ -1,8 +1,15 @@
 #@- fontName=Arial,style=Bold,fontSize=14,marginTop=10,marginLeft=250, content=center
   	Este es un texto en negrita, 
-	#@- fontName=Arial,style=Bold,fontSize=8, marginLeft=250, content=center
-		texto entre medio
+	#@- fontName=Arial,style=Bold,fontSize=8, marginLeft=250, content=center, rectangle={100;200}
+		texto de cabecera debería abarcar todo
+		#@- fontName=Arial,style=Bold,fontSize=8,marginTop=0, marginLeft=150, content=center
+			texto pequeño
+		-#@
+		#@- fontName=Arial,style=Bold,fontSize=8,marginTop=0, marginLeft=300, content=center 
+			texto pequeño
+		-#@
 	-#@
+
 	con margen superior de 10 y margen izquierdo de 50.
 -#@
 #@- fontName=Times New Roman,style=Italic,fontSize=12,marginTop=20,marginLeft=30 
